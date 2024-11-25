@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://cgmovnoj3i2w7"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_jd2o7"]
+size = Vector2(64, 64)
+
+[node name="Building" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.375523, 0.550311, 0.897925, 1)
+texture = SubResource("PlaceholderTexture2D_jd2o7")
+centered = false
