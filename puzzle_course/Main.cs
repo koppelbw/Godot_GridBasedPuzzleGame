@@ -1,32 +1,47 @@
+using Game.Manager;
+using Game.Resources.Building;
 using Godot;
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Game;
 
-public partial class Main : Node2D
+public partial class Main : Node
 {
-	private Sprite2D cursor;
-	private PackedScene buildingScene;
-	private Button placeBuildingButton;
+	private GridManager gridManager;
+	private Sprite2D cursor;	
+	private BuildingResource towerResource;
+	private BuildingResource villageResource;
+	private Button placeTowerButton;
+	private Button placeVillageButton;
+	private Node2D ySortRoot;
+
+	private Vector2I? hoveredGridCell;
+	private BuildingResource toPlaceBuildingResource;
+	
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		buildingScene = GD.Load<PackedScene>("res://scenes/building/Building.tscn");
+		towerResource = GD.Load<BuildingResource>("res://resources/building/tower.tres");
+		villageResource = GD.Load<BuildingResource>("res://resources/building/village.tres");
+		gridManager = GetNode<GridManager>("GridManager");
 		cursor = GetNode<Sprite2D>("Cursor");
-		placeBuildingButton = GetNode<Button>("PlaceBuildingButton");
+		placeTowerButton = GetNode<Button>("PlaceTowerButton");
+		placeVillageButton = GetNode<Button>("PlaceVillageButton");
+		ySortRoot = GetNode<Node2D>("YSortRoot");
 
 		cursor.Visible = false;
+		placeTowerButton.Pressed += OnPlaceTowerButtonPressed;
+		placeVillageButton.Pressed += OnPlaceVillageButtonPressed;
 
-		placeBuildingButton.Pressed += OnButtonPressed;
+		gridManager.ResourceTilesUpdated += OnResourceTilesUpdate;
 	}
 
     public override void _UnhandledInput(InputEvent evt)
     {
-        if(cursor.Visible && evt.IsActionPressed("left_click"))
+        if(hoveredGridCell.HasValue && evt.IsActionPressed("left_click") 
+			&& gridManager.IsTilePositionBuildable(hoveredGridCell.Value))
 		{
-			PlaceBuildingAtMousePosition();
+			PlaceBuildingAtHoveredCellPosition();
 			cursor.Visible = false;
 		}
     }
@@ -34,30 +49,52 @@ public partial class Main : Node2D
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
 	{		
-		cursor.GlobalPosition = GetMouseGridCellPosition() * 64;
+		var gridPosition = gridManager.GetMouseGridCellPosition();
+		cursor.GlobalPosition = gridPosition * 64;
+
+		if(toPlaceBuildingResource is not null && cursor.Visible && (!hoveredGridCell.HasValue || 
+			hoveredGridCell.Value != gridPosition))
+		{
+			hoveredGridCell = gridPosition;
+			gridManager.ClearHighlightedTiles();
+			gridManager.HighlightExpandedBuildableTiles(hoveredGridCell.Value, toPlaceBuildingResource.BuildableRadius);
+			gridManager.HighlightResourceTiles(hoveredGridCell.Value, toPlaceBuildingResource.ResourceRadius);
+		}
 	}
 
+	// *****************************************************************
 
-
-	private Vector2 GetMouseGridCellPosition()
+	private void PlaceBuildingAtHoveredCellPosition()
 	{
-		var mousePosition = GetGlobalMousePosition();
-		var gridPosition = (mousePosition / 64).Floor();
+		if(!hoveredGridCell.HasValue)
+		{
+			return;
+		}
 
-		return gridPosition;
+		var building = toPlaceBuildingResource.BuildingScene.Instantiate<Node2D>();
+		building.GlobalPosition = hoveredGridCell.Value * 64;
+		ySortRoot.AddChild(building);
+		
+		hoveredGridCell = null;
+		gridManager.ClearHighlightedTiles();
 	}
 
-	private void PlaceBuildingAtMousePosition()
+	private void OnPlaceTowerButtonPressed()
 	{
-		var building = buildingScene.Instantiate<Node2D>();
-		AddChild(building);
-
-		var gridPosition = GetMouseGridCellPosition() * 64;
-		building.GlobalPosition = gridPosition;
-	}
-
-	private void OnButtonPressed()
-	{
+		toPlaceBuildingResource = towerResource;
 		cursor.Visible = true;
+		gridManager.HighlightBuildableTiles();
+	}
+
+	private void OnPlaceVillageButtonPressed()
+	{
+		toPlaceBuildingResource = villageResource;
+		cursor.Visible = true;
+		gridManager.HighlightBuildableTiles();
+	}
+
+	private void OnResourceTilesUpdate(int resourceCount)
+	{
+		GD.Print(resourceCount);
 	}
 }

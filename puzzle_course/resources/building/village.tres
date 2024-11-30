@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BuildingResource" load_steps=3 format=3 uid="uid://bt3rmw2nmebne"]
+
+[ext_resource type="PackedScene" uid="uid://brbo1lqk78nmr" path="res://scenes/building/Village.tscn" id="1_44fx2"]
+[ext_resource type="Script" path="res://resources/building/BuildingResource.cs" id="1_d104j"]
+
+[resource]
+script = ExtResource("1_d104j")
+BuildableRadius = 0
+ResourceRadius = 3
+BuildingScene = ExtResource("1_44fx2")

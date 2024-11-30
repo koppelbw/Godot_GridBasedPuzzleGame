@@ -1,20 +1,54 @@
-[gd_scene load_steps=3 format=3 uid="uid://buqsqeq7qb722"]
+[gd_scene load_steps=7 format=4 uid="uid://buqsqeq7qb722"]
 
 [ext_resource type="Script" path="res://Main.cs" id="1_ku383"]
+[ext_resource type="TileSet" uid="uid://dh8bq7lltkylh" path="res://resources/tiles.tres" id="2_rgp3l"]
+[ext_resource type="PackedScene" uid="uid://wtci5jw0817h" path="res://scenes/manager/GridManager.tscn" id="2_wupln"]
+[ext_resource type="TileSet" uid="uid://c7ygknberlpmj" path="res://resources/highlight_tileset.tres" id="2_x1dgr"]
+[ext_resource type="PackedScene" uid="uid://dvnsvjr6g1gae" path="res://scenes/building/Base.tscn" id="5_cbk8l"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_xi0n3"]
 size = Vector2(64, 64)
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node"]
 script = ExtResource("1_ku383")
+
+[node name="GridManager" parent="." node_paths=PackedStringArray("highlightTileMapLayer", "baseTerrianTileMapLayer") instance=ExtResource("2_wupln")]
+highlightTileMapLayer = NodePath("../HighlightTileMapLayer")
+baseTerrianTileMapLayer = NodePath("../YSortRoot/BaseTerrainTileMapLayer")
+
+[node name="YSortRoot" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="BaseTerrainTileMapLayer" type="TileMapLayer" parent="YSortRoot"]
+y_sort_enabled = true
+tile_map_data = PackedByteArray("AAACAAcAAAAFAAEAAAACAAYAAAAFAAEAAAACAAUAAAAFAAEAAAADAAUAAAAGAAEAAAADAAQAAAAGAAEAAAAEAAQAAAAGAAEAAAAFAAQAAAAGAAEAAAAFAAMAAAAGAAEAAAAGAAMAAAAGAAAAAAAHAAMAAAAGAAEAAAAHAAIAAAAFAAAAAAAIAAIAAAAGAAAAAAAJAAIAAAAHAAAAAAAJAAMAAAAGAAEAAAAIAAMAAAAGAAEAAAAIAAQAAAAGAAEAAAAHAAQAAAAGAAEAAAAGAAQAAAAGAAEAAAAGAAUAAAAGAAEAAAAFAAUAAAAGAAEAAAAEAAUAAAAGAAEAAAAEAAYAAAAGAAEAAAADAAYAAAAGAAEAAAADAAcAAAAGAAEAAAAEAAcAAAAGAAEAAAAFAAYAAAAGAAEAAAAGAAYAAAAGAAEAAAAHAAUAAAAGAAEAAAAIAAUAAAAGAAEAAAAIAAYAAAAGAAEAAAAHAAYAAAAGAAEAAAAJAAYAAAAGAAEAAAAJAAcAAAAGAAEAAAAKAAcAAAAGAAEAAAAJAAUAAAAGAAEAAAALAAMAAAAGAAAAAAAMAAYAAAAHAAEAAAAJAAgAAAAFAAEAAAAFAAcAAAAGAAEAAAAFAAgAAAAGAAEAAAAEAAgAAAAGAAEAAAADAAgAAAAGAAEAAAACAAgAAAAFAAIAAAADAAkAAAAFAAIAAAAEAAkAAAAGAAIAAAAFAAkAAAAHAAIAAAAHAAkAAAAFAAMAAAAIAAkAAAAGAAMAAAAJAAkAAAAHAAIAAAAKAAgAAAAGAAIAAAALAAgAAAAHAAIAAAALAAcAAAAGAAEAAAALAAYAAAAGAAEAAAALAAUAAAAGAAEAAAAKAAQAAAAGAAEAAAAJAAQAAAAGAAEAAAAKAAMAAAAGAAAAAAALAAQAAAAGAAEAAAAMAAUAAAAHAAEAAAAFAAIAAAAHAAAAAAAEAAIAAAAFAAAAAAAEAAMAAAAGAAEAAAADAAMAAAAGAAAAAAACAAQAAAAGAAEAAAABAAQAAAAFAAIAAAABAAMAAAAFAAAAAAACAAMAAAAGAAAAAAAGAAgAAAAHAAIAAAAGAAcAAAAGAAEAAAAHAAcAAAAGAAIAAAAIAAcAAAAGAAIAAAANAAgAAAAIAAAAAAANAAkAAAAIAAEAAAANAAoAAAAHAAIAAAAMAAoAAAAGAAMAAAALAAoAAAAFAAMAAAABAAoAAAAIAAMAAAAAAAcAAAAIAAAAAAAAAAgAAAAIAAIAAAAMAAAAAAAGAAAAAAANAAAAAAAGAAAAAAAOAAAAAAAGAAMAAAAPAAAAAAAGAAMAAAAQAAAAAAAGAAMAAAARAAAAAAAHAAAAAAARAAEAAAAIAAEAAAARAAIAAAAHAAIAAAAQAAIAAAAFAAAAAAAQAAMAAAAHAAEAAAAOAAUAAAAFAAMAAAAPAAUAAAAGAAEAAAAPAAYAAAAIAAEAAAAPAAgAAAAIAAIAAAAQAAUAAAAHAAIAAAAQAAQAAAAHAAEAAAAPAAMAAAAFAAAAAAACAAAAAAAFAAAAAAADAAAAAAAGAAMAAAAEAAAAAAAHAAMAAAACAAEAAAAIAAIAAAAIAAAAAAAIAAMAAAAMAAMAAAAHAAEAAAAMAAQAAAAHAAEAAAAKAAUAAAAGAAEAAAAKAAYAAAAGAAEAAAAMAAEAAAAFAAEAAAAMAAIAAAAIAAEAAAANAAEAAAAHAAIAAAALAAAAAAAFAAMAAAA=")
+tile_set = ExtResource("2_rgp3l")
+
+[node name="ResourceTileMapLayer" type="TileMapLayer" parent="YSortRoot/BaseTerrainTileMapLayer"]
+y_sort_enabled = true
+tile_map_data = PackedByteArray("AAALAAMAAQAAAAAAAAAKAAQAAQAAAAAAAAAMAAQAAQAAAAAAAAAKAAMAAQAAAAAAAAAJAAMAAQAAAAAAAAAQAAMAAQAAAAAAAAADAAcAAQAAAAAAAAAEAAgAAQAAAAAAAAAIAAkAAQAAAAAAAAADAAMAAQAAAAAAAAACAAMAAQAAAAAAAAABAAMAAQAAAAAAAAAEAAIAAQAAAAAAAAANAAgAAQAAAAAAAAA=")
+tile_set = ExtResource("2_rgp3l")
+
+[node name="Base" parent="YSortRoot" instance=ExtResource("5_cbk8l")]
+position = Vector2(384, 320)
+
+[node name="HighlightTileMapLayer" type="TileMapLayer" parent="."]
+modulate = Color(1, 1, 1, 0.470588)
+tile_set = ExtResource("2_x1dgr")
 
 [node name="Cursor" type="Sprite2D" parent="."]
 texture = SubResource("PlaceholderTexture2D_xi0n3")
 centered = false
 
-[node name="PlaceBuildingButton" type="Button" parent="."]
-offset_left = 21.0
-offset_top = 668.0
-offset_right = 151.0
-offset_bottom = 699.0
-text = "Place Building"
+[node name="PlaceTowerButton" type="Button" parent="."]
+offset_top = 640.0
+offset_right = 130.0
+offset_bottom = 671.0
+text = "Place Tower"
+
+[node name="PlaceVillageButton" type="Button" parent="."]
+offset_left = 147.0
+offset_top = 640.0
+offset_right = 277.0
+offset_bottom = 671.0
+text = "Place Village"
